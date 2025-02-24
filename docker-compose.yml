@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    privileged: true  # Necesario para acceso USB
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    volumes:
+      - "/dev/bus/usb:/dev/bus/usb"
+    network_mode: "host"  # Para acceso directo al hardware
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  # Si necesitas la base de datos:
+  db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=fingerprint_db
+      - MYSQL_USER=fingerprint_user
+      - MYSQL_PASSWORD=secure_password
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  db_data: 
